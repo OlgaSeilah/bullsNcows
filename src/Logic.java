@@ -66,25 +66,6 @@ public class Logic {
         return String.valueOf(secretNumber);
     }
 
-    public static void writeResultsToHistoryFile(Map<Animal, Integer> result, int numberOfMoves) throws IOException {
-        String fileName = generateFileName(numberOfMoves);
-        System.out.printf("File name: %s\n", fileName);
-        Path pathToFile = Path.of("src", "files", fileName);
-
-        try {
-            Files.createDirectories(pathToFile.getParent());
-
-            if (!Files.exists(pathToFile)) { // todo ?
-                try (BufferedWriter bufferedOutputStream = Files.newBufferedWriter(pathToFile)) {
-                    bufferedOutputStream.write(result.toString());
-                }
-
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public static String generateFileName(int numberOfMoves) {
         LocalDateTime ldtNow = LocalDateTime.now();
         //2020  - 12  - 31  _ 23 _ 59 _ 1000000
@@ -94,5 +75,11 @@ public class Logic {
         System.out.printf("Generated file name: %s\n", fileName);
 
         return fileName + "_" + numberOfMoves + ".txt";
+    }
+
+    public static String renameFile(String fileName, int numberOfMoves) {
+        StringBuilder sb = new StringBuilder(fileName);
+        sb.replace(17,18, String.valueOf(numberOfMoves));
+        return sb.toString();
     }
 }

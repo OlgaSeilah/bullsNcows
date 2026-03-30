@@ -1,7 +1,10 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class BullsNCowsMain {
@@ -19,8 +22,19 @@ public class BullsNCowsMain {
         HashMap<Integer, HashMap<Animal, Integer>> result = new HashMap<>();
         int numberOfMoves = 0;
 
-//        String fileName = Logic.generateFileName(numberOfMoves); System.out.printf("File name: %s\n", fileName);
-//        Path pathToFile = Path.of("src", "files", fileName); System.out.printf("pathToFile: %s\n", pathToFile);
+        String fileName = Logic.generateFileName(numberOfMoves); System.out.printf("File name: %s\n", fileName);
+        Path pathToFile = Path.of("src", "files", fileName); System.out.printf("pathToFile: %s\n", pathToFile);
+
+        if (!Files.exists(pathToFile)) {
+            try {
+                Files.createDirectories(pathToFile.getParent());
+                Files.createFile(pathToFile);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+
 ////todo rename file (add moves number)
         try {
             while (win == false) {
@@ -28,9 +42,7 @@ public class BullsNCowsMain {
 
 // =====================================================================================================================
 
-//                if (!Files.exists(pathToFile.getParent())) { // todo ?
-//                    Files.createFile(pathToFile);
-//                }
+
 // =====================================================================================================================
 
                 givenByUserString = input.readLine();
@@ -45,9 +57,9 @@ public class BullsNCowsMain {
                         + value));
 
 
-//                try (BufferedWriter bufferedOutputStream = Files.newBufferedWriter(pathToFile)) {
-//                    bufferedOutputStream.write(result.toString());
-//                }
+                try (BufferedWriter bufferedOutputStream = Files.newBufferedWriter(pathToFile)) {
+                    bufferedOutputStream.write(result.toString());
+                }
 
                 if (validatedUserString.equals(secretNumber)) {
                     System.out.println("The end!");
@@ -56,7 +68,9 @@ public class BullsNCowsMain {
 
 
                 if (win == true) {
-
+                    Files.copy(pathToFile, Path.of("src", "files",Logic.renameFile(fileName, numberOfMoves)),
+                            StandardCopyOption.REPLACE_EXISTING);
+                    Files.delete(pathToFile);
                     break;
                 }
             }
